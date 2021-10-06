@@ -25,13 +25,13 @@
         $projetoPath = dir($dir);
 
         print "<label>Host</label>";
-        print "<input class='form form-control col-md-4' type='text' name='host' id='host'><br>";
+        print "<input class='form form-control col-md-4' type='text' name='host' id='host' value='localhost'><br>";
         
         print "<label>Usuario</label>";
-        print "<input class='form form-control col-md-4' type='text' name='usuario' id='usuario'><br>";
+        print "<input class='form form-control col-md-4' type='text' name='usuario' id='usuario' value='usuario'><br>";
         
         print "<label>Senha</label>";
-        print "<input class='form form-control col-md-4' type='text' name='password' id='password'><br>";
+        print "<input class='form form-control col-md-4' type='text' name='password' id='password' value='usuario' ><br>";
 
         print "<label>Base de Dados</label>";
         print "<input class='form form-control col-md-4' type='text' name='db' id='db'>";
