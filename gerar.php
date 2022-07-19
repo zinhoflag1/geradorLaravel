@@ -13,7 +13,22 @@
   <body>
   <div class="container">
       <div class="row">
-        <div class="col-md-6">
+      <div class="col-md-12">
+            <legend>Nomeclatuda Banco de Dados</legend>
+
+            <b>Obs: Gerar primeiro as tabelas FILHAS</b>
+            <li>Chave primária : <b>id</b></li>
+            <li>Campo Data : <b>data_</b> ( Datapicker )</li>
+            <li>Campo Valores Monerarios : <b>val_</b> ( Mascara )</li>
+            <li>Nome para checkbox <b>ck_</b>  Tipo BD TINYINT(1)</li>
+            <li>Nome para Radio Button <b>rb_</b> Tipo BD TINYINT(2)</li>
+            <li>Campo Numerico <b>num_</b> varchar</li>
+            <br>
+            <li>Ordenação Formulario ( segue ordem colunas tabela BD )</li>
+            <li>Comentário de colunas usado como Label</li>
+            
+        </div>
+        <div class="col-md-12">
         <?php 
 
 
@@ -41,26 +56,32 @@ try {
     }
 
 
-    var_dump($dados);   
+    //var_dump($dados);   
 
 
     ###################  create ########################
 
-    $datapicker_form = "
-    ";
+    $datapicker_form = "";
 
     # inicio formulario 
     
-        print "{{ Form::open(array('url' => '/".$table."')) }}";
-        print "<br>";
-        print "{{ Form::token() }}";
-        print "<br>";
+        $openForm = "{{ Form::open(array('url' => '/".$table."')) }}
+        <br>
+        <div class='col-md-6'>
+        {{ Form::token() }}
+        </div>";
     //
 
+    # fim form
+    $fimForm = "{{ Form::close() }}";
+
+    $input = "";
     
     foreach ($dados as $key => $coluna) {
 
-               
+        $total_campos = ceil(count($dados) / 2) ;
+
+                      
         # id 
         if($coluna->COLUMN_KEY == 'PRI'){
             //echo $coluna->COLUMN_NAME."<br>";
@@ -68,10 +89,12 @@ try {
         # Texto
         }elseif($coluna->DATA_TYPE == 'varchar'){
             if(false) { # mascara
-                echo $coluna->COLUMN_NAME."<br>";
+                $input .= $coluna->COLUMN_NAME."<br>";
             }else { # texto
-                echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
-                echo "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
+                $input .= "<div class='col-md-6'>";
+                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                $input .=  "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                $input .= "</div>";
             }
         
         # data 
@@ -86,8 +109,10 @@ try {
                                 
                                 ";
 
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
-            echo "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
+                                $input .= "<div class='col-md-6'>";
+                                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                                $input .= "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                                $input .= "</div>";
 
         # dataTime
         }elseif($coluna->DATA_TYPE == 'datetime'){
@@ -99,68 +124,68 @@ try {
                                 </script>
                                 
                                 ";
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
-            echo "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}"."<br>";
+                                $input .= "<div class='col-md-6'>";
+                                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                                $input .=  "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
+                                $input .= "</div>";
 
         # radio 
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
         
         /* checkbox  */
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
         
 
         /* select */
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .= "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
 
         /* autocomplete */
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
         
         /* textarea */
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
         
 
         /* upload */
         }elseif($coluna->DATA_TYPE == 'varchar'){
-            echo "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }"."<br>";
-            echo $coluna->COLUMN_NAME."<br>";
+            $input .= "<div class='col-md-6'>";
+            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
+            $input .=  $coluna->COLUMN_NAME."<br>";
+            $input .= "</div>";
         }
 
     }
 
-    # fim form
-    print "{{ Form::close() }}";
+    
+    print $openForm;
+    
+    print $input;
+    //print $fimForm;
+   // print $datapicker_form;
 
-    print $datapicker_form;
+//var_dump($total_campos);
+
     ?>
-
-        </div>
-        <div class="col-md-6">
-            <legend>Nomeclatuda Banco de Dados</legend>
-
-            <b>Obs: Gerar primeiro as tabelas FILHAS</b>
-            <li>Chave primária : <b>id</b></li>
-            <li>Campo Data : <b>data_</b> ( Datapicker )</li>
-            <li>Campo Valores Monerarios : <b>val_</b> ( Mascara )</li>
-            <li>Nome para checkbox <b>ck_</b>  Tipo BD TINYINT(1)</li>
-            <li>Nome para Radio Button <b>rb_</b> Tipo BD TINYINT(2)</li>
-            <li>Campo Numerico <b>num_</b> varchar</li>
-            <br>
-            <li>Ordenação Formulario ( segue ordem colunas tabela BD )</li>
-            <li>Comentário de colunas usado como Label</li>
-            
-        </div>
-      </div>
-
 
 
 
