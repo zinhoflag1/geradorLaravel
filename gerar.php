@@ -46,12 +46,16 @@ try {
 }
 
     $dados = array();
+    $dadosSemPrimary = array();
 
     $sql = "SELECT * FROM information_schema.columns where table_name = '{$table}' and table_schema = '{$dbname}'";
     $query = $pdo->prepare($sql);
     $query->execute();
 
     while( $linha = $query->fetch(PDO::FETCH_OBJ) ){
+        if($linha->COLUMN_KEY != "PRI"){
+            $dadosSemPrimary[] = $linha;
+        }
         $dados[] = $linha;
     }
 
@@ -63,38 +67,53 @@ try {
 
     $datapicker_form = "";
 
-    # inicio formulario 
     
-        $openForm = "{{ Form::open(array('url' => '/".$table."')) }}
-        <br>
-        <div class='col-md-6'>
-        {{ Form::token() }}
-        </div>";
-    //
-
-    # fim form
-    $fimForm = "{{ Form::close() }}";
 
     $input = "";
-    
-    foreach ($dados as $key => $coluna) {
 
-        $total_campos = ceil(count($dados) / 2) ;
+    $cont = 0;
+
+
+# inicio formulario 
+print nl2br(htmlspecialchars("<div class='col-md-12'>
+{{ Form::open(array('url' => '/".$table."')) }}
+{{ Form::token() }}"));
+    
+print nl2br(htmlspecialchars("
+            <div class='row'>"));
+    foreach ($dadosSemPrimary as $key => $coluna) {
+
+        if( ($key == 0) && ($cont == 2) ) {
+            print nl2br(htmlspecialchars("
+            <div class='row'>"));
+           
+        } 
 
                       
         # id 
         if($coluna->COLUMN_KEY == 'PRI'){
             //echo $coluna->COLUMN_NAME."<br>";
+
+        # int
+    }elseif($coluna->DATA_TYPE == 'int'){
+        
+            print nl2br(htmlspecialchars("
+                        <div class='col'>
+                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                        {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}
+            </div>"));
+        
         
         # Texto
         }elseif($coluna->DATA_TYPE == 'varchar'){
             if(false) { # mascara
-                $input .= $coluna->COLUMN_NAME."<br>";
+                print nl2br(htmlspecialchars($coluna->COLUMN_NAME."<br>"));
             }else { # texto
-                $input .= "<div class='col-md-6'>";
-                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                $input .=  "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                $input .= "</div>";
+                print nl2br(htmlspecialchars("
+                            <div class='col'>
+                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                            {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}
+                </div>"));
             }
         
         # data 
@@ -109,10 +128,11 @@ try {
                                 
                                 ";
 
-                                $input .= "<div class='col-md-6'>";
-                                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                                $input .= "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                                $input .= "</div>";
+                                print nl2br(htmlspecialchars("
+                                        <div class='col'>
+                                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                                            {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                                        </div>"));
 
         # dataTime
         }elseif($coluna->DATA_TYPE == 'datetime'){
@@ -124,73 +144,104 @@ try {
                                 </script>
                                 
                                 ";
-                                $input .= "<div class='col-md-6'>";
-                                $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                                $input .=  "{{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}";
-                                $input .= "</div>";
+                                print nl2br(htmlspecialchars("<div class='col'>
+                                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                                        {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
+                                        </div>"));
 
         # radio 
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
-        
         /* checkbox  */
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
-        
-
         /* select */
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .= "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
-
         /* autocomplete */
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
-        
         /* textarea */
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
-        
-
         /* upload */
-        }elseif($coluna->DATA_TYPE == 'varchar'){
-            $input .= "<div class='col-md-6'>";
-            $input .=  "{{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }";
-            $input .=  $coluna->COLUMN_NAME."<br>";
-            $input .= "</div>";
+        
         }
+
+        
+        $cont ++;
+        
+        if( $cont == 2 ){
+            print nl2br(htmlspecialchars("
+            </div>
+            <div class='row'>"));
+            $cont = 0;
+        }
+
+       
 
     }
 
-    
-    print $openForm;
-    
-    print $input;
-    //print $fimForm;
-   // print $datapicker_form;
-
-//var_dump($total_campos);
-
-    ?>
 
 
+# fim form
+$fimForm = "{{ Form::close() }}
 
-    
+</div>";
 
 
+var_dump($dados);
+?>
 
+<form>
+  <div class="row">
+    <div class="col">
+        <label>Campo 1</label>
+      <input type="text" class="form-control" placeholder="First name">
+    </div>
+    <div class="col">
+    <label>Campo 1</label>
+      <input type="text" class="form-control" placeholder="Last name">
+    </div>
+  </div>
+</form>
 
+<div class='col-md-12'>
+{{ Form::open(array('url' => '/aju_cc')) }}
+{{ Form::token() }}
+<div class='row'>
+    <div class='col'>
+    {{ Form::label('data_reg', 'Data Entrada Registro
+    ')}}
+    {{ Form::text('data_reg', 'Data Entrada Registro
+    ')}}
+    </div>
+    <div class='col'>
+    {{ Form::label('id_unidade', 'Identificador da Undiade')}}
+    {{ Form::text('id_unidade', 'Identificador da Undiade') }}
+    </div>
+</div>
+<div class='row'>
+    <div class='col'>
+    {{ Form::label('historico', 'Historico Lancamento')}}
+    {{ Form::text('historico', 'Historico Lancamento') }}
+    </div>
+    <div class='col'>
+    {{ Form::label('origem', 'Origem Lancamento
+    ')}}
+    {{ Form::text('origem', 'Origem Lancamento
+    ') }}
+    </div>
+</div>
+<div class='row'>
+    <div class='col'>
+    {{ Form::label('destino', 'Destino Lancamento')}}
+    {{ Form::text('destino', 'Destino Lancamento') }}
+    </div>
+    <div class='col'>
+    {{ Form::label('tipo', 'Tipo Lancamento')}}
+    {{ Form::text('tipo', 'Tipo Lancamento') }}
+    </div>
+</div>
+<div class='row'>
+    <div class='col'>
+    {{ Form::label('qtd', 'Quantidade
+    ')}}
+    {{ Form::text('qtd', 'Quantidade
+    ') }}
+    </div>
+    <div class='col'>
+    {{ Form::label('dc', 'Debito Credito')}}
+    {{ Form::text('dc', 'Debito Credito') }}
+    </div>
+</div>
