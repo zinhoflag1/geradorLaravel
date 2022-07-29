@@ -26,6 +26,8 @@
             <br>
             <li>Ordenação Formulario ( segue ordem colunas tabela BD )</li>
             <li>Comentário de colunas usado como Label</li>
+            <li>Bootstrap v5.1.3</li>
+
             
         </div>
         <div class="col-md-12">
@@ -99,9 +101,9 @@ print nl2br(htmlspecialchars("
         
             print nl2br(htmlspecialchars("
                         <div class='col'>
-                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                        {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}
-            </div>"));
+                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                        {{ Form::text('".$coluna->COLUMN_NAME."', '', ['class'=>'form form-control', 'value'=>'{{old('".$coluna->COLUMN_NAME."')}}']) }}
+            <br></div>"));
         
         
         # Texto
@@ -111,9 +113,9 @@ print nl2br(htmlspecialchars("
             }else { # texto
                 print nl2br(htmlspecialchars("
                             <div class='col'>
-                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                            {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."') }}
-                </div>"));
+                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                            {{ Form::text('".$coluna->COLUMN_NAME."', '', ['class'=>'form form-control', 'value'=>old('".$coluna->COLUMN_NAME."')]) }}
+                <br></div>"));
             }
         
         # data 
@@ -130,9 +132,9 @@ print nl2br(htmlspecialchars("
 
                                 print nl2br(htmlspecialchars("
                                         <div class='col'>
-                                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                                            {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                                        </div>"));
+                                            {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                                            {{ Form::text('".$coluna->COLUMN_NAME."', '', ['class'=>'form form-control'])}}
+                                        <br></div>"));
 
         # dataTime
         }elseif($coluna->DATA_TYPE == 'datetime'){
@@ -145,19 +147,54 @@ print nl2br(htmlspecialchars("
                                 
                                 ";
                                 print nl2br(htmlspecialchars("<div class='col'>
-                                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                                        {{ Form::text('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}
-                                        </div>"));
+                                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                                        {{ Form::text('".$coluna->COLUMN_NAME."', '', ['class'=>'form form-control'])}}
+                                        <br></div>"));
 
-        # radio 
-        /* checkbox  */
+
         /* select */
         /* autocomplete */
         /* textarea */
         /* upload */
         
-        }
+        # radio sim ou nao / ckeckbox
+        }elseif($coluna->DATA_TYPE == 'tinyint'){
+         
+                # radio sim ou nao
+                if(stripos($coluna->COLUMN_COMMENT, "Sim/Nao")){
 
+
+
+                print nl2br(htmlspecialchars("<div class='col'>
+                    {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                    <div class='form-check'>
+                      <input class='form-check-input' type='radio' name='".$coluna->COLUMN_NAME."' id='".$coluna->COLUMN_NAME."1'>
+                      <label class='form-check-label' for='".$coluna->COLUMN_NAME."'>
+                        Sim
+                      </label>
+                    </div>
+                    <div class='form-check'>
+                      <input class='form-check-input' type='radio' name='".$coluna->COLUMN_NAME."' id='".$coluna->COLUMN_NAME."2' checked>
+                      <label class='form-check-label' for='".$coluna->COLUMN_NAME."'>
+                        Não
+                      </label>
+                    </div>
+
+                    <br></div>"));
+                # checkbox
+                }else {
+                    print nl2br(htmlspecialchars("<div class='col'>
+                        {{ Form::label('".$coluna->COLUMN_NAME."', '".$coluna->COLUMN_COMMENT."')}}:
+                            <div class='form-check'>
+                              <input class='form-check-input' type='checkbox' value='' id='".$coluna->COLUMN_NAME."'>
+                              <label class='form-check-label' for='".$coluna->COLUMN_NAME."'>
+                                ".$coluna->COLUMN_COMMENT."
+                              </label>
+                            </div>
+                          <br></div>"));
+
+                }
+        }
         
         $cont ++;
         
@@ -172,76 +209,17 @@ print nl2br(htmlspecialchars("
 
     }
 
+print nl2br(htmlspecialchars("<div class='row'>
+                                {{ Form::submit('Gravar', ['class'=>'btn btn-primary']) }}
+                            </div>"));
+
 
 
 # fim form
-$fimForm = "{{ Form::close() }}
+print nl2br(htmlspecialchars("{{ Form::close() }}
 
-</div>";
+</div>"));
 
 
-var_dump($dados);
+//var_dump($dados);
 ?>
-
-<form>
-  <div class="row">
-    <div class="col">
-        <label>Campo 1</label>
-      <input type="text" class="form-control" placeholder="First name">
-    </div>
-    <div class="col">
-    <label>Campo 1</label>
-      <input type="text" class="form-control" placeholder="Last name">
-    </div>
-  </div>
-</form>
-
-<div class='col-md-12'>
-{{ Form::open(array('url' => '/aju_cc')) }}
-{{ Form::token() }}
-<div class='row'>
-    <div class='col'>
-    {{ Form::label('data_reg', 'Data Entrada Registro
-    ')}}
-    {{ Form::text('data_reg', 'Data Entrada Registro
-    ')}}
-    </div>
-    <div class='col'>
-    {{ Form::label('id_unidade', 'Identificador da Undiade')}}
-    {{ Form::text('id_unidade', 'Identificador da Undiade') }}
-    </div>
-</div>
-<div class='row'>
-    <div class='col'>
-    {{ Form::label('historico', 'Historico Lancamento')}}
-    {{ Form::text('historico', 'Historico Lancamento') }}
-    </div>
-    <div class='col'>
-    {{ Form::label('origem', 'Origem Lancamento
-    ')}}
-    {{ Form::text('origem', 'Origem Lancamento
-    ') }}
-    </div>
-</div>
-<div class='row'>
-    <div class='col'>
-    {{ Form::label('destino', 'Destino Lancamento')}}
-    {{ Form::text('destino', 'Destino Lancamento') }}
-    </div>
-    <div class='col'>
-    {{ Form::label('tipo', 'Tipo Lancamento')}}
-    {{ Form::text('tipo', 'Tipo Lancamento') }}
-    </div>
-</div>
-<div class='row'>
-    <div class='col'>
-    {{ Form::label('qtd', 'Quantidade
-    ')}}
-    {{ Form::text('qtd', 'Quantidade
-    ') }}
-    </div>
-    <div class='col'>
-    {{ Form::label('dc', 'Debito Credito')}}
-    {{ Form::text('dc', 'Debito Credito') }}
-    </div>
-</div>
