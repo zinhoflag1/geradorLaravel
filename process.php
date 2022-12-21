@@ -26,7 +26,7 @@
 			$password = $_POST["password"];
 			$pathProjeto = $_POST['selProjeto'];
 
-			$pdo = new PDO ("mysql:host=$hostname;dbname=$dbname","$username","$password");
+			$pdo = new PDO ("mysql:host=$hostname;dbname=$dbname;port=3307","$username","$password");
 		} catch (PDOException $e) {
 			echo "Erro de Conexão " . $e->getMessage() . "\n";
 			exit;
