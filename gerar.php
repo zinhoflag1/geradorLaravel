@@ -419,11 +419,77 @@ if ($request->method() == "GET") {
                             ]);
             }'));
 
+        print "<table class='table table-sm table-bordered' id='tblCampos'>
+            <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th>Regras</th>
+            </tr>";
+
+        foreach ($dados as $key => $campo1) {
+
+
+            //var_dump($dados);
+            //die();
+
+            print "<tr>
+                    <td>".$campo1->COLUMN_NAME."</td>
+                    <td>
+                        <table class=\"table table-sm table-bordered table-striped\" name='tblOpcoes'>
+                            <tr>
+                                <td><input type=\"checkbox\" name=\"required\" value='required'> Campo Obrigatório</td>
+                                <td><input type=\"text\" name=\"max_required\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>        
+                                <td></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><input type=\"checkbox\" name=\"numero\" value='integer'> Número</td>
+                                <td><input type=\"text\" name=\"max_numero\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td> 
+                                <td></td>   
+                            </tr>
+                            
+                            <tr>
+                                <td><input type=\"checkbox\" name=\"numero\" value='email'> Email</td>
+                                <td><input type=\"text\" name=\"max_numero\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>
+                                <td></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><input type=\"checkbox\" name=\"numero\"> File</td>
+                                <td><input type=\"text\" name=\"max_numero\"> Tamanho Máximo</td>    
+                                <td><input type=\"checkbox\" name=\"numero\" value='png'> PNG
+                                    <input type=\"checkbox\" name=\"numero\" value='jpg'> JPG
+                                    <input type=\"checkbox\" name=\"numero\" value='jpeg'> JPEG
+                                    <input type=\"checkbox\" name=\"numero\" value='pdf'> PDF
+                                    <input type=\"checkbox\" name=\"numero\" value='doc'> DOC
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td>
+                        <span name='spRegra'></span>
+                    </td>
+
+                  </tr>";
+            
+        }
+
+        print "<table>";
+
+
+
+
+        print "<button id='gerar'>Gerar Validação</button>";
+
+
+
+
 
 
         ###################################   FORMULARIO GENERICO   #######################################################
 
-            print nl2br(htmlspecialchars("
+            print nl2br(htmlspecialchars(" ############  formulario generico #########################
                 {{ Form::open(array('url' => '/" . $table . "/create')) }}
                 {{ Form::token() }}"));
 
@@ -531,3 +597,66 @@ if ($request->method() == "GET") {
                 <?php
                 //print $formEdit;
                 ?>-->
+
+
+
+
+
+
+   <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+   <script type="text/javascript">
+       var campo;
+       $("#gerar").click(function(){
+
+            
+
+         $("#tblCampos > tbody > tr").each(function(index, tr){
+
+            if(index >0){
+                campo = "'"+tr.cells[0]+"'";
+                var table = tr.cells[1].children[0].innerObject;
+               
+               table.each(function(index2, tr2){
+                    console.log(tr2) ;
+               });
+               
+                    
+                    
+          
+            }
+
+            $("table[name='tblOpcoes'] > tbody > tr").each(function(index1, tr1){
+                //console.log(index1);
+                //console.log(tr1);
+            }) ;
+
+        }) ;
+
+
+        //console.log($(this).parent().parent());
+
+            /*tipo       = $(this).parent().parent().find('td').find('select').val();
+            caracteres = $(this).parent().parent().find('td').find('input').val();
+
+            var max = '';
+            if(caracteres > 0){
+                max = '|max:'+caracteres;
+            }
+
+            var span;
+           
+           //alert($(this).parent().parent().find('td').find('span').text().length == 0);
+            if($(this).parent().parent().find('td').find('span').text().length == 0) {
+                span = tipo+max;
+            }else {
+                 span += tipo+max+"|";    
+            }
+
+            $(this).parent().parent().find('td')[4].innerHTML += span;*/
+
+//       console.log(campo);     
+       });
+
+
+       
+   </script>
