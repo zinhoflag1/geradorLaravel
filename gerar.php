@@ -437,38 +437,47 @@ if ($request->method() == "GET") {
                     <td>
                         <table class=\"table table-sm table-bordered table-striped\" name='tblOpcoes'>
                             <tr>
-                                <td><input type=\"checkbox\" name=\"required\" value='required'> Campo Obrigatório</td>
-                                <td><input type=\"text\" name=\"max_required\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>        
+                                <!--  CAMPO OBRIGATORIO -->
+                                <td><input type=\"checkbox\" name=\"required_".$campo1->COLUMN_NAME."\" value='required' data-campo='".$campo1->COLUMN_NAME."' data-max='required'> Campo Obrigatório</td>
+                                <td><input type=\"text\" name=\"max_required_".$campo1->COLUMN_NAME."\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>        
                                 <td></td>
                             </tr>
                             
                             <tr>
-                                <td><input type=\"checkbox\" name=\"numero\" value='integer'> Número</td>
-                                <td><input type=\"text\" name=\"max_numero\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td> 
+                                <!-- CAMPO INTEIRO NUMEROS -->
+                                <td><input type=\"checkbox\" name=\"integer_".$campo1->COLUMN_NAME."\" value='integer' data-campo='".$campo1->COLUMN_NAME."' data-max='integer'> Número</td>
+                                <td><input type=\"text\" name=\"max_integer_".$campo1->COLUMN_NAME."\" value=''> Máximo Caracteres</td> 
                                 <td></td>   
                             </tr>
                             
                             <tr>
-                                <td><input type=\"checkbox\" name=\"numero\" value='email'> Email</td>
-                                <td><input type=\"text\" name=\"max_numero\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>
+
+                                <!-- CAMPO EMAIL -->
+                                <td><input type=\"checkbox\" name=\"email".$campo1->COLUMN_NAME."\" value='email' data-campo='".$campo1->COLUMN_NAME."' data-max='email'> Email</td>
+                                <td><input type=\"text\" name=\"max_email_".$campo1->COLUMN_NAME."\" value=''> Máximo Caracteres</td>
                                 <td></td>
                             </tr>
                             
                             <tr>
-                                <td><input type=\"checkbox\" name=\"numero\"> File</td>
-                                <td><input type=\"text\" name=\"max_numero\"> Tamanho Máximo</td>    
-                                <td><input type=\"checkbox\" name=\"numero\" value='png'> PNG
-                                    <input type=\"checkbox\" name=\"numero\" value='jpg'> JPG
-                                    <input type=\"checkbox\" name=\"numero\" value='jpeg'> JPEG
-                                    <input type=\"checkbox\" name=\"numero\" value='pdf'> PDF
-                                    <input type=\"checkbox\" name=\"numero\" value='doc'> DOC
+
+                                <!-- CAMPO UPLOAD -->
+                                <td><input type=\"checkbox\" name=\"file_".$campo1->COLUMN_NAME."\" value='file' data-campo='".$campo1->COLUMN_NAME."' data-max='file'> File</td>
+                                <td><input type=\"text\" name=\"max_file_".$campo1->COLUMN_NAME."\" value='300'> Tamanho Máximo MB</td>    
+                                <td><input type=\"checkbox\" name=\"numero_png\" value='png'> PNG
+                                    <input type=\"checkbox\" name=\"numero_jpg\" value='jpg'> JPG
+                                    <input type=\"checkbox\" name=\"numero_jpeg\" value='jpeg'> JPEG
+                                    <input type=\"checkbox\" name=\"numero_pdf\" value='pdf'> PDF
+                                    <input type=\"checkbox\" name=\"numero_doc\" value='doc'> DOC
                                 </td>
                             </tr>
                         </table>
                     </td>
 
                     <td>
-                        <span name='spRegra'></span>
+                        <span name='spRegra_".$campo1->COLUMN_NAME."'></span>
+                        <br>
+                        <hr>
+                        <span name='spValida_".$campo1->COLUMN_NAME."'></span>
                     </td>
 
                   </tr>";
@@ -480,7 +489,7 @@ if ($request->method() == "GET") {
 
 
 
-        print "<button id='gerar'>Gerar Validação</button>";
+        print "<button id='gerar'>Gerar Validação</button><br><br>";
 
 
 
@@ -606,55 +615,87 @@ if ($request->method() == "GET") {
    <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
    <script type="text/javascript">
        var campo;
+       var regra = [];
+       var valida = [];
+
+
+       $("input[type='checkbox']").click(function() {
+            
+            if( $(this).is(":checked", true ) ){
+
+                campo   = $(this).data('campo');
+                name_tamanho = "max_"+$(this).data('max')+"_"+campo;
+
+
+                if($("input[name='"+name_tamanho+"']").val().length > 0) {
+                    tamanho = "|max:"+$("input[name='"+name_tamanho+"']").val();
+                }else {
+                    tamanho = "";
+                }
+                if(regra.length ===0){
+                    regra = $(this).val()+ tamanho;          
+                    
+
+                }else {
+                    regra +="|"+($(this).val()+ tamanho );             
+                }
+
+                /* REQUERIDO */
+                    if($(this).val() == 'required'){
+
+                        valida.push($(this).data('campo') +'.'+ $(this).val() + '=> \'O Campo '+ $(this).data('campo') + ' é Obrigatório !') ;
+                    }
+
+                    /* tamanho maximo */
+                    if(tamanho.length > 0){
+
+                        valida.push($(this).data('campo') +'.max=> \'O Campo '+ $(this).data('campo') + ' deve ter no máximo '+ $("input[name='"+name_tamanho+"']").val() +' Caracteres !') ;
+                    }
+
+
+
+                    /* INTEIRO */
+                    if($(this).val() == 'integer'){
+
+                        valida.push($(this).data('campo') +'.'+ $(this).val() + '=> \'O Campo '+ $(this).data('campo') + ' deve conter somente números !') ;
+                    }
+
+                    /* EMAIL */
+                    if($(this).val() == 'email'){
+
+                        valida.push($(this).data('campo') +'.email => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
+                    }
+
+                    /* EMAIL */
+                    if($(this).val() == 'file'){
+
+                        valida.push($(this).data('campo') +'.email => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
+                    }
+
+                    
+
+
+            $('span[name=spRegra_'+campo+']').text('\''+regra+'\'');
+
+            $('span[name=spValida_'+campo+']').text('\''+valida+'\'');            
+                
+
+            }else {
+
+                
+            }
+
+
+
+            console.log(campo);
+            console.log(regra);
+            console.log(valida);
+
+       });
+
        $("#gerar").click(function(){
 
-            
 
-         $("#tblCampos > tbody > tr").each(function(index, tr){
-
-            if(index >0){
-                campo = "'"+tr.cells[0]+"'";
-                var table = tr.cells[1].children[0].innerObject;
-               
-               table.each(function(index2, tr2){
-                    console.log(tr2) ;
-               });
-               
-                    
-                    
-          
-            }
-
-            $("table[name='tblOpcoes'] > tbody > tr").each(function(index1, tr1){
-                //console.log(index1);
-                //console.log(tr1);
-            }) ;
-
-        }) ;
-
-
-        //console.log($(this).parent().parent());
-
-            /*tipo       = $(this).parent().parent().find('td').find('select').val();
-            caracteres = $(this).parent().parent().find('td').find('input').val();
-
-            var max = '';
-            if(caracteres > 0){
-                max = '|max:'+caracteres;
-            }
-
-            var span;
-           
-           //alert($(this).parent().parent().find('td').find('span').text().length == 0);
-            if($(this).parent().parent().find('td').find('span').text().length == 0) {
-                span = tipo+max;
-            }else {
-                 span += tipo+max+"|";    
-            }
-
-            $(this).parent().parent().find('td')[4].innerHTML += span;*/
-
-//       console.log(campo);     
        });
 
 
