@@ -8,8 +8,13 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <style type="text/css">
+        li {
+  list-style-type: none;
+}
+    </style>
     <title>Hello, world!</title>
+
 </head>
 
 <body>
@@ -463,11 +468,11 @@ if ($request->method() == "GET") {
                                 <!-- CAMPO UPLOAD -->
                                 <td><input type=\"checkbox\" name=\"file_".$campo1->COLUMN_NAME."\" value='file' data-campo='".$campo1->COLUMN_NAME."' data-max='file'> File</td>
                                 <td><input type=\"text\" name=\"max_file_".$campo1->COLUMN_NAME."\" value='300'> Tamanho Máximo MB</td>    
-                                <td><input type=\"checkbox\" name=\"numero_png\" value='png'> PNG
-                                    <input type=\"checkbox\" name=\"numero_jpg\" value='jpg'> JPG
-                                    <input type=\"checkbox\" name=\"numero_jpeg\" value='jpeg'> JPEG
-                                    <input type=\"checkbox\" name=\"numero_pdf\" value='pdf'> PDF
-                                    <input type=\"checkbox\" name=\"numero_doc\" value='doc'> DOC
+                                <td><input type=\"checkbox\" name=\"file_png\" value='png' data-campo='file'> PNG <br>
+                                    <!--<input type=\"checkbox\" name=\"file_jpg\" value='jpg'> JPG <br>
+                                    <input type=\"checkbox\" name=\"file_jpeg\" value='jpeg'> JPEG <br>
+                                    <input type=\"checkbox\" name=\"file_pdf\" value='pdf'> PDF <br>
+                                    <input type=\"checkbox\" name=\"file_doc\" value='doc'> DOC <br>-->
                                 </td>
                             </tr>
                         </table>
@@ -490,6 +495,21 @@ if ($request->method() == "GET") {
 
 
         print "<button id='gerar'>Gerar Validação</button><br><br>";
+
+        print "<table>
+            <tr>
+                <td>[
+                    <ul id='regra'></ul>
+                    ]
+                </td>
+            </tr>
+            <tr>
+                <td>[
+                    <ul id='valida'></ul>
+                    ]
+                </td>
+            </tr>
+        </table>";
 
 
 
@@ -618,40 +638,41 @@ if ($request->method() == "GET") {
        var regra = [];
        var valida = [];
 
+       var regraGeral = []
+       var validaGeral = [];
+
+
+
+
 
        $("input[type='checkbox']").click(function() {
             
             if( $(this).is(":checked", true ) ){
 
                 campo   = $(this).data('campo');
+
+
                 name_tamanho = "max_"+$(this).data('max')+"_"+campo;
 
 
-                if($("input[name='"+name_tamanho+"']").val().length > 0) {
-                    tamanho = "|max:"+$("input[name='"+name_tamanho+"']").val();
-                }else {
-                    tamanho = "";
-                }
                 if(regra.length ===0){
-                    regra = $(this).val()+ tamanho;          
-                    
-
+                    regra = '\''+campo+'\' => \''+$(this).val();          
                 }else {
-                    regra +="|"+($(this).val()+ tamanho );             
+                    regra +="|"+($(this).val());             
                 }
+
+                if($("input[name='"+name_tamanho+"']").val().length > 0) {
+                    regra += "|max:"+$("input[name='"+name_tamanho+"']").val();
+                    valida.push($(this).data('campo') +'.max=> \'O Campo '+ $(this).data('campo') + ' deve ter no máximo '+ $("input[name='"+name_tamanho+"']").val() +' Caracteres !') ;
+                }
+
+
 
                 /* REQUERIDO */
                     if($(this).val() == 'required'){
 
                         valida.push($(this).data('campo') +'.'+ $(this).val() + '=> \'O Campo '+ $(this).data('campo') + ' é Obrigatório !') ;
                     }
-
-                    /* tamanho maximo */
-                    if(tamanho.length > 0){
-
-                        valida.push($(this).data('campo') +'.max=> \'O Campo '+ $(this).data('campo') + ' deve ter no máximo '+ $("input[name='"+name_tamanho+"']").val() +' Caracteres !') ;
-                    }
-
 
 
                     /* INTEIRO */
@@ -666,10 +687,16 @@ if ($request->method() == "GET") {
                         valida.push($(this).data('campo') +'.email => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
                     }
 
-                    /* EMAIL */
+                    /* FILE  
                     if($(this).val() == 'file'){
 
-                        valida.push($(this).data('campo') +'.email => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
+                        valida.push($(this).data('campo') +'.file => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
+                    }*/
+
+                    /* TIPOS UPLOAD */
+                    if($(this).val() == 'png'){
+
+                        valida.push($(this).data('campo') +'.mimes => O Campo '+ $(this).data('campo') + ' só é permitido arquivos do Tipo png, jpg, jpeg, pdf, doc !') ;
                     }
 
                     
@@ -678,7 +705,9 @@ if ($request->method() == "GET") {
             $('span[name=spRegra_'+campo+']').text('\''+regra+'\'');
 
             $('span[name=spValida_'+campo+']').text('\''+valida+'\'');            
-                
+
+
+            regraGeral.push(regra);
 
             }else {
 
@@ -686,14 +715,21 @@ if ($request->method() == "GET") {
             }
 
 
-
-            console.log(campo);
-            console.log(regra);
-            console.log(valida);
-
        });
 
        $("#gerar").click(function(){
+
+       
+           regraGeral.forEach((element) => {
+                $('#regra').append('<li>'+element+'</li>');
+            });
+
+
+
+           valida.forEach((element) => {
+                $('#valida').append('<li>'+element+'</li>');
+            });
+
 
 
        });
