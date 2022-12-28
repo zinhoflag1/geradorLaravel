@@ -73,240 +73,16 @@
 
                 ###################  create ########################
 
-                $datapicker_form = "";
-
-                $input = "";
-
-                $cont = 0;
-
-                # FORM CREATE
-                $formCreate = "";
-
-                # FORM EDIT
-                $formEdit = "";
-
-                # CONTROLLER CHECKBOX
-                $checkbox_controller = '';
-
-                $colection = '$nomeColecao';
+                include('create_form.php');
 
 
-                $formCreate .= nl2br(htmlspecialchars("<div class='col-md-12'>
-                {{ Form::open(array('url' => '/" . $table . "/create')) }}
-                {{ Form::token() }}"));
-
-                $formEdit .= nl2br(htmlspecialchars("<div class='col-md-12'>
-                {{ Form::open(array('url' => '/" . $table . "/edit')) }}
-                {{ Form::token() }}"));
-
-
-                $formCreate .= nl2br(htmlspecialchars("
-            <div class='row'>"));
-                foreach ($dadosSemPrimary as $key => $coluna) {
-
-                    if (($key == 0) && ($cont == 2)) {
-                        $formCreate .= nl2br(htmlspecialchars("
-            <div class='row'>"));
-
-                        $formEdit .= nl2br(htmlspecialchars("
-            <div class='row'>"));
-                    }
-
-
-                    # id 
-                    if ($coluna->COLUMN_KEY == 'PRI') {
-                        //echo $coluna->COLUMN_NAME."<br>";
-
-                        # int
-                    } elseif ($coluna->DATA_TYPE == 'int') {
-
-                        $formCreate .= nl2br(htmlspecialchars("
-                        <div class='col'>
-                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                        {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control', old('" . $coluna->COLUMN_NAME . "')]) }}
-                        <br></div>"));
-
-                        $formEdit .= nl2br(htmlspecialchars("
-                        <div class='col'>
-                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                        {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control', old('" . $coluna->COLUMN_NAME . "')]) }}
-                        <br></div>"));
-
-
-                        # Texto
-                    } elseif ($coluna->DATA_TYPE == 'varchar') {
-                        if (false) { # mascara
-                            $formCreate .= nl2br(htmlspecialchars($coluna->COLUMN_NAME . "<br>"));
-                            $formEdit .= nl2br(htmlspecialchars($coluna->COLUMN_NAME . "<br>"));
-                        } else { # texto
-                            $formCreate .= nl2br(htmlspecialchars("
-                            <div class='col'>
-                            {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                            {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control', 'value'=>old('" . $coluna->COLUMN_NAME . "')]) }}
-                <br></div>"));
-
-                            $formEdit .= nl2br(htmlspecialchars("
-                            <div class='col'>
-                            {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                            {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control', 'value'=>old('" . $coluna->COLUMN_NAME . "')]) }}
-                <br></div>"));
-                        }
-
-                        # data 
-                    } elseif ($coluna->DATA_TYPE == 'date') {
-
-                        $datapicker_form .= "<!- Datapicker " . $coluna->COLUMN_COMMENT . "->
-                                <script>
-                                \$function(){
-                                $(#" . $coluna->COLUMN_NAME . ").datetimepicker({
-                                });
-                                </script>
-                                
-                                ";
-
-                        $formCreate .= nl2br(htmlspecialchars("
-                                        <div class='col'>
-                                            {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                                            {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control'])}}
-                                        <br></div>"));
-
-                        $formEdit .= nl2br(htmlspecialchars("
-                                        <div class='col'>
-                                            {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                                            {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control'])}}
-                                        <br></div>"));
-
-                        # dataTime
-                    } elseif ($coluna->DATA_TYPE == 'datetime') {
-                        $datapicker_form .= "<!- Datapicker " . $coluna->COLUMN_COMMENT . "->
-                                <script>
-                                \$function(){
-                                $(#" . $coluna->COLUMN_NAME . ").datetimepicker({
-                                });
-                                </script>
-                                
-                                ";
-
-                        $formCreate .= nl2br(htmlspecialchars("<div class='col'>
-                                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                                        {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control'])}}
-                                        <br></div>"));
-
-                        $formEdit .= nl2br(htmlspecialchars("<div class='col'>
-                                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                                        {{ Form::text('" . $coluna->COLUMN_NAME . "', '', ['class'=>'form form-control'])}}
-                                        <br></div>"));
-
-
-                        /* select */
-                        /* autocomplete */
-                        /* textarea */
-                        /* upload */
-
-                        # radio sim ou nao / ckeckbox
-                    } elseif ($coluna->DATA_TYPE == 'tinyint') {
-
-                        # radio sim ou nao
-                        if (stripos($coluna->COLUMN_COMMENT, "Sim/Nao")) {
-
-                            $formCreate .= nl2br(htmlspecialchars("<div class='col'>
-                    {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                    <div class='form-check'>
-                      <input class='form-check-input' type='radio' name='" . $coluna->COLUMN_NAME . "' id='" . $coluna->COLUMN_NAME . "1'>
-                      <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                        Sim
-                      </label>
-                    </div>
-                    <div class='form-check'>
-                      <input class='form-check-input' type='radio' name='" . $coluna->COLUMN_NAME . "' id='" . $coluna->COLUMN_NAME . "2' checked>
-                      <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                        Não
-                      </label>
-                    </div>
-
-                    <br></div>"));
-
-                            $formEdit .= nl2br(htmlspecialchars("<div class='col'>
-                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                        <div class='form-check'>
-                          <input class='form-check-input' type='radio' name='" . $coluna->COLUMN_NAME . "' id='" . $coluna->COLUMN_NAME . "1'>
-                          <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                            Sim
-                          </label>
-                        </div>
-                        <div class='form-check'>
-                          <input class='form-check-input' type='radio' name='" . $coluna->COLUMN_NAME . "' id='" . $coluna->COLUMN_NAME . "2' checked>
-                          <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                            Não
-                          </label>
-                        </div>
-
-                        <br></div>"));
-                            # checkbox
-                        } else {
-
-                            $checkbox_controller .= "{\$request->has('" . $coluna->COLUMN_NAME . "') ? \$request['" . $coluna->COLUMN_NAME . "'] = 1 : \$request['" . $coluna->COLUMN_NAME . "'] =0;}";
-
-                            $formCreate .= nl2br(htmlspecialchars("<div class='col'>
-                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                            <div class='form-check'>
-                              {{Form::checkbox('" . $coluna->COLUMN_NAME . "', 
-                                        $colection->" . $coluna->COLUMN_NAME . ",
-                                        ( ($colection->" . $coluna->COLUMN_NAME . " == 0) ? false : true),
-                                         )}}
-                              <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                                " . $coluna->COLUMN_COMMENT . "
-                              </label>
-                            </div>
-                          <br></div>"));
-
-                            $formEdit .= nl2br(htmlspecialchars("<div class='col'>
-                        {{ Form::label('" . $coluna->COLUMN_NAME . "', '" . $coluna->COLUMN_COMMENT . "')}}:
-                            <div class='form-check'>
-                              <input class='form-check-input' type='checkbox' value='' id='" . $coluna->COLUMN_NAME . "'>
-                              <label class='form-check-label' for='" . $coluna->COLUMN_NAME . "'>
-                                " . $coluna->COLUMN_COMMENT . "
-                              </label>
-                            </div>
-                          <br></div>"));
-                        }
-                    }
-
-                    $cont++;
-
-                    if ($cont == 2) {
-                        $formCreate .= nl2br(htmlspecialchars("
-            </div>
-            <div class='row'>"));
-
-                        $formEdit .= nl2br(htmlspecialchars("
-            </div>
-            <div class='row'>"));
-
-                        $cont = 0;
-                    }
-                }
-
-                $formCreate .= nl2br(htmlspecialchars("<div class='row'>
-                                {{ Form::submit('Gravar', ['class'=>'btn btn-primary']) }}
-                            </div>"));
-
-                $formEdit .= nl2br(htmlspecialchars("<div class='row'>
-                                {{ Form::submit('Gravar', ['class'=>'btn btn-primary']) }}
-                            </div>"));
+                ################### controllers ####################
+                include('controllers.php');
 
 
 
-                # fim form
-                $formCreate .= nl2br(htmlspecialchars("{{ Form::close() }}
-    </div>"));
 
-
-                $formEdit .= nl2br(htmlspecialchars("{{ Form::close() }}
-    </div>"));
-
-
-
+####################################################################################################################################################
 
 
                 ?>
@@ -316,113 +92,10 @@
 
                 <?php
 
-                /* controller indec */
-                $controllerIndex = nl2br(htmlspecialchars('
-if ($request->method() == "GET") { 
-            $empdors = PaeEmpdor::paginate(7);<
-
-            return view(<br>
-                \'drrd/paebm/empdor/index\',
-                [<br>
-                    \'empdors\' => $empdors,
-                ]
-            );
-        } elseif($request->method() == "POST") {
-
-            $empdors = PaeEmpdor::where(\'pae_empdors.nome\', \'LIKE\', \'%\' . $request->get(\'search\') . \'%\')
-                ->paginate();
-
-                return view(
-                    \'drrd/paebm/empdor/index\',
-                    [
-                        \'empdors\' => $empdors,
-                    ]
-                );
-        }'));
-
-                ############################# /* create */ ######################################
-
-                $controllerCreate = nl2br(htmlspecialchars('return view(\'drrd/paebm/empdor/create\')'));
 
 
-                #############################  /* store */  ##################################### 
+####################################################################################################################
 
-                $controllerStore = nl2br(htmlspecialchars('$request->validate(
-                [
-                    \'nome\'               => "required|max:110",
-                ],
-                [        
-                    \'nome.required\' => \'O campo  Nome é Obrigatório !\',
-                    \'nome.max\' => \'O campo Nome suporta no máximo 110 caracteres !\',
-                ]
-            );
-
-
-            $empnto = new PaeEmpdor;
-            $empnto->nome               = $request->nome;
-
-            $empnto->save();
-        
-            return redirect(\'pae/empdor\')->with(\'message\',\'Registro Gravado com Sucesso \');'));
-
-                #############################  /* show */  ###################################### 
-
-                $controllerShow = nl2br(htmlspecialchars('return view(
-            \'drrd/paebm/empdor/show\',
-            [
-                \'empdor\' => $paeEmpdor,
-            ]
-        );'));
-
-                #############################  /* edit  */  #################################### 
-
-                $controllerEdit = nl2br(htmlspecialchars('return view(
-            \'drrd/paebm/empdor/edit\',
-            [
-                \'empdor\' => $paeEmpdor,
-            ]
-        );'));
-
-
-                #############################  /* update */  #################################### 
-
-                $controllerUpdate = nl2br(htmlspecialchars('$request->validate(
-            [
-                \'id\'                 => "required|integer",
-                \'nome\'               => "required|max:110",
-            ],
-            [
-                \'id.required\' => \'O campo Id não está presente\',
-                \'nome.required\' => \'O campo Nome é Obrigatório !\',
-                \'nome.max\' => \'O campo Nome suporta no máximo 110 caracteres !\',
-            ]
-        );
-
-        $empnto = PaeEmpdor::find($request->id);
-        $empnto->nome               = $request->nome;
-
-        $empnto->update();
-                
-        return redirect(\'pae/empdor\')->with(\'message\',\'Registro Atualizado com Sucesso \');'));
-
-                #############################  /* destroy */  ################################### 
-
-                $controllerDestroy = nl2br(htmlspecialchars('$compdecLeis = CompdecAnexo::find($id);
-
-            $compdecLeis->delete();
-            
-            /* se for arquivoi remover */
-            if(Storage::exists(\'public/compdecleis/\'.$compdecLeis->arquivo)){
-                Storage::delete(\'public/compdecleis/\'.$compdecLeis->arquivo);
-            }
-
-            if($compdecLeis){
-                return back()
-                    ->with([
-                            \'message\' => \'Registro deletado com Sucesso !\',
-                            \'active_tab\' => \'#-arquivo-tab\',
-                            ]);
-            }'));
 
         print "<table class='table table-sm table-bordered' id='tblCampos'>
             <tr>
@@ -431,48 +104,52 @@ if ($request->method() == "GET") {
                 <th>Regras</th>
             </tr>";
 
+?>
+
+<form action="result.php" method="POST" name="frm">
+
+<?php
         foreach ($dados as $key => $campo1) {
 
-
-            //var_dump($dados);
-            //die();
+            print "<input type='hidden' name='".$campo1->COLUMN_NAME."' value='".$campo1->COLUMN_NAME."'>";
+           
 
             print "<tr>
                     <td>".$campo1->COLUMN_NAME."</td>
                     <td>
                         <table class=\"table table-sm table-bordered table-striped\" name='tblOpcoes'>
                             <tr>
+                                <td><input type=\"text\" name='".$campo1->COLUMN_NAME."_max' value='".$campo1->CHARACTER_MAXIMUM_LENGTH."' data-max='max'> Máximo Caracteres</td>        
+
+                            </tr>
+                            <tr>
                                 <!--  CAMPO OBRIGATORIO -->
-                                <td><input type=\"checkbox\" name=\"required_".$campo1->COLUMN_NAME."\" value='required' data-campo='".$campo1->COLUMN_NAME."' data-max='required'> Campo Obrigatório</td>
-                                <td><input type=\"text\" name=\"max_required_".$campo1->COLUMN_NAME."\" value='".$campo1->CHARACTER_MAXIMUM_LENGTH."'> Máximo Caracteres</td>        
-                                <td></td>
+                                <td><input type=\"checkbox\" name='".$campo1->COLUMN_NAME."_required'[] value='required' data-campo='".$campo1->COLUMN_NAME."' data-max='required'> Campo Obrigatório</td>
                             </tr>
                             
                             <tr>
                                 <!-- CAMPO INTEIRO NUMEROS -->
-                                <td><input type=\"checkbox\" name=\"integer_".$campo1->COLUMN_NAME."\" value='integer' data-campo='".$campo1->COLUMN_NAME."' data-max='integer'> Número</td>
-                                <td><input type=\"text\" name=\"max_integer_".$campo1->COLUMN_NAME."\" value=''> Máximo Caracteres</td> 
-                                <td></td>   
+                                <td><input type=\"checkbox\" name='".$campo1->COLUMN_NAME."_integer' value='integer' data-campo='".$campo1->COLUMN_NAME."' data-max='integer'> Número</td>
                             </tr>
                             
                             <tr>
 
                                 <!-- CAMPO EMAIL -->
-                                <td><input type=\"checkbox\" name=\"email".$campo1->COLUMN_NAME."\" value='email' data-campo='".$campo1->COLUMN_NAME."' data-max='email'> Email</td>
-                                <td><input type=\"text\" name=\"max_email_".$campo1->COLUMN_NAME."\" value=''> Máximo Caracteres</td>
-                                <td></td>
+                                <td><input type=\"checkbox\" name='".$campo1->COLUMN_NAME."_email' value='email' data-campo='".$campo1->COLUMN_NAME."' data-max='email'> Email</td>
                             </tr>
                             
                             <tr>
 
                                 <!-- CAMPO UPLOAD -->
-                                <td><input type=\"checkbox\" name=\"file_".$campo1->COLUMN_NAME."\" value='file' data-campo='".$campo1->COLUMN_NAME."' data-max='file'> File</td>
-                                <td><input type=\"text\" name=\"max_file_".$campo1->COLUMN_NAME."\" value='300'> Tamanho Máximo MB</td>    
-                                <td><input type=\"checkbox\" name=\"file_png\" value='png' data-campo='file'> PNG <br>
-                                    <!--<input type=\"checkbox\" name=\"file_jpg\" value='jpg'> JPG <br>
-                                    <input type=\"checkbox\" name=\"file_jpeg\" value='jpeg'> JPEG <br>
-                                    <input type=\"checkbox\" name=\"file_pdf\" value='pdf'> PDF <br>
-                                    <input type=\"checkbox\" name=\"file_doc\" value='doc'> DOC <br>-->
+                                <td><input type=\"checkbox\" name=\"file_".$campo1->COLUMN_NAME."\" value='file' data-campo='".$campo1->COLUMN_NAME."' data-max='file'> File
+                                </td>
+                                </tr>
+                            <tr>
+                                <td><input type=\"checkbox\" name=\"file_tipo[]\" value='png' data-campo='file'> PNG <br>
+                                    <input type=\"checkbox\" name=\"file_tipo[]\" value='jpg'> JPG <br>
+                                    <input type=\"checkbox\" name=\"file_tipo[]\" value='jpeg'> JPEG <br>
+                                    <input type=\"checkbox\" name=\"file_tipo[]\" value='pdf'> PDF <br>
+                                    <input type=\"checkbox\" name=\"file_tipo[]\" value='doc'> DOC <br>
                                 </td>
                             </tr>
                         </table>
@@ -482,7 +159,7 @@ if ($request->method() == "GET") {
                         <span name='spRegra_".$campo1->COLUMN_NAME."'></span>
                         <br>
                         <hr>
-                        <span name='spValida_".$campo1->COLUMN_NAME."'></span>
+                        <ul id='valida1'></ul>
                     </td>
 
                   </tr>";
@@ -490,6 +167,18 @@ if ($request->method() == "GET") {
         }
 
         print "<table>";
+
+        
+
+        ?>
+
+        <button type="submit">Gerar</button>
+
+</form>
+
+        <?php
+
+
 
 
 
@@ -578,7 +267,7 @@ if ($request->method() == "GET") {
                 <br>
                 #####################################################################################
                 <br>
-                <b> ################## CHECKBOX - NO CONTROLLER #############</b>
+                <b> ################## CHECKBOX - NO CONTROLLER ################# </b>
                 <?php
                 //print $checkbox_controller
                 ?>
@@ -642,17 +331,13 @@ if ($request->method() == "GET") {
        var validaGeral = [];
 
 
-
-
-
        $("input[type='checkbox']").click(function() {
             
             if( $(this).is(":checked", true ) ){
 
+                /*nome do campo banco de dados */
                 campo   = $(this).data('campo');
-
-
-                name_tamanho = "max_"+$(this).data('max')+"_"+campo;
+                console.log(campo);
 
 
                 if(regra.length ===0){
@@ -661,11 +346,13 @@ if ($request->method() == "GET") {
                     regra +="|"+($(this).val());             
                 }
 
-                if($("input[name='"+name_tamanho+"']").val().length > 0) {
-                    regra += "|max:"+$("input[name='"+name_tamanho+"']").val();
-                    valida.push($(this).data('campo') +'.max=> \'O Campo '+ $(this).data('campo') + ' deve ter no máximo '+ $("input[name='"+name_tamanho+"']").val() +' Caracteres !') ;
-                }
 
+
+                /* MAX LENGHT */
+                    if($(this).val() == 'max'){
+
+                        valida.push(campo +'.max=> \'O Campo '+ $(this).data('campo') + ' deve ter no máximo '+ $("input[name='"+campo+"']").val() +' Caracteres !') ;
+                    }
 
 
                 /* REQUERIDO */
@@ -675,25 +362,25 @@ if ($request->method() == "GET") {
                     }
 
 
-                    /* INTEIRO */
+                /* INTEIRO */
                     if($(this).val() == 'integer'){
 
                         valida.push($(this).data('campo') +'.'+ $(this).val() + '=> \'O Campo '+ $(this).data('campo') + ' deve conter somente números !') ;
                     }
 
-                    /* EMAIL */
+                /* EMAIL */
                     if($(this).val() == 'email'){
 
                         valida.push($(this).data('campo') +'.email => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
                     }
 
-                    /* FILE  
+                /* FILE  
                     if($(this).val() == 'file'){
 
                         valida.push($(this).data('campo') +'.file => O Campo '+ $(this).data('campo') + ' deve deve ser um email valido !') ;
                     }*/
 
-                    /* TIPOS UPLOAD */
+                /* TIPOS UPLOAD */
                     if($(this).val() == 'png'){
 
                         valida.push($(this).data('campo') +'.mimes => O Campo '+ $(this).data('campo') + ' só é permitido arquivos do Tipo png, jpg, jpeg, pdf, doc !') ;
@@ -704,7 +391,12 @@ if ($request->method() == "GET") {
 
             $('span[name=spRegra_'+campo+']').text('\''+regra+'\'');
 
-            $('span[name=spValida_'+campo+']').text('\''+valida+'\'');            
+            valida.forEach((element) => {
+                $('#valida1').append('<li>'+element+'</li>');
+            });
+
+              
+valida = [];
 
 
             regraGeral.push(regra);
@@ -716,6 +408,7 @@ if ($request->method() == "GET") {
 
 
        });
+
 
        $("#gerar").click(function(){
 
